@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Backup directories
+backup_*/
+../backup_*/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# System files
+Thumbs.db
