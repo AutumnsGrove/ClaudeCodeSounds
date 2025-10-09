@@ -1,0 +1,99 @@
+{
+  "hooks": {
+    "session_start": {
+      "description": "Plays when a Claude Code session starts - Terminal awakening sound",
+      "command": "afplay ~/ClaudeCodeSounds/session_start.wav &"
+    },
+    "session_end": {
+      "description": "Plays when a Claude Code session ends - Graceful logout sound",
+      "command": "afplay ~/ClaudeCodeSounds/session_end.wav &"
+    },
+    "tool_start": {
+      "description": "Plays when a tool begins execution - Process spawning sound",
+      "command": "afplay ~/ClaudeCodeSounds/tool_start.wav &"
+    },
+    "tool_complete": {
+      "description": "Plays when a tool finishes execution - Success confirmation",
+      "command": "afplay ~/ClaudeCodeSounds/tool_complete.wav &"
+    },
+    "prompt_submit": {
+      "description": "Plays when user submits a prompt - Keystroke echo",
+      "command": "afplay ~/ClaudeCodeSounds/prompt_submit.wav &"
+    },
+    "response_start": {
+      "description": "Plays when Claude starts responding - Data stream begins",
+      "command": "afplay ~/ClaudeCodeSounds/response_start.wav &"
+    },
+    "response_end": {
+      "description": "Plays when Claude finishes responding - Buffer flush complete",
+      "command": "afplay ~/ClaudeCodeSounds/response_end.wav &"
+    },
+    "subagent_done": {
+      "description": "Plays when a subagent completes its task - Achievement chord",
+      "command": "afplay ~/ClaudeCodeSounds/subagent_done.wav &"
+    },
+    "precompact_warning": {
+      "description": "Plays before context window compaction - Warning tone",
+      "command": "afplay ~/ClaudeCodeSounds/precompact_warning.wav &"
+    },
+    "notification": {
+      "description": "General notification sound - System alert",
+      "command": "afplay ~/ClaudeCodeSounds/notification.wav &"
+    }
+  },
+
+  "_comments": {
+    "audio_player": "Replace 'afplay' with your system's audio player:",
+    "macOS": "afplay <file.wav> &",
+    "linux_alsa": "aplay <file.wav> &",
+    "linux_pulse": "paplay <file.wav> &",
+    "windows_powershell": "powershell -c (New-Object Media.SoundPlayer '<file.wav>').PlaySync();",
+    "path_setup": "Update the paths to match where you've stored the .wav files",
+    "background_execution": "The '&' at the end runs the sound in the background so it doesn't block Claude Code",
+    "alternative_sounds": "Check the extras/ and prompt3style/ folders for alternative sound sets"
+  },
+
+  "alternativeSets": {
+    "cyberpunkIntense": {
+      "description": "More intense cyberpunk aesthetic from prompt3style/",
+      "session_start": "afplay ~/ClaudeCodeSounds/prompt3style/session_start.wav &",
+      "session_end": "afplay ~/ClaudeCodeSounds/prompt3style/session_end.wav &",
+      "tool_start": "afplay ~/ClaudeCodeSounds/prompt3style/tool_start.wav &",
+      "tool_complete": "afplay ~/ClaudeCodeSounds/prompt3style/tool_complete.wav &",
+      "prompt_submit": "afplay ~/ClaudeCodeSounds/prompt3style/prompt_submit.wav &",
+      "response_start": "afplay ~/ClaudeCodeSounds/prompt3style/response_start.wav &",
+      "response_end": "afplay ~/ClaudeCodeSounds/prompt3style/response_end.wav &",
+      "subagent_done": "afplay ~/ClaudeCodeSounds/prompt3style/subagent_done.wav &",
+      "precompact_warning": "afplay ~/ClaudeCodeSounds/prompt3style/precompact_warning.wav &",
+      "notification": "afplay ~/ClaudeCodeSounds/prompt3style/notification.wav &"
+    },
+
+    "mixedExtras": {
+      "description": "Example of mixing in sounds from the extras/ folder",
+      "session_start": "afplay ~/ClaudeCodeSounds/session_start.wav &",
+      "session_end": "afplay ~/ClaudeCodeSounds/extras/Flute.wav &",
+      "tool_start": "afplay ~/ClaudeCodeSounds/tool_start.wav &",
+      "tool_complete": "afplay ~/ClaudeCodeSounds/extras/ItemGet.wav &",
+      "subagent_done": "afplay ~/ClaudeCodeSounds/extras/SecretUnlocked.wav &"
+    }
+  },
+
+  "platformSpecificExamples": {
+    "linux": {
+      "usingAplay": {
+        "session_start": "aplay ~/ClaudeCodeSounds/session_start.wav &",
+        "tool_complete": "aplay ~/ClaudeCodeSounds/tool_complete.wav &"
+      },
+      "usingPaplay": {
+        "session_start": "paplay ~/ClaudeCodeSounds/session_start.wav &",
+        "tool_complete": "paplay ~/ClaudeCodeSounds/tool_complete.wav &"
+      }
+    },
+    "windows": {
+      "powerShell": {
+        "session_start": "powershell -c (New-Object Media.SoundPlayer 'C:\\Users\\YourName\\ClaudeCodeSounds\\session_start.wav').PlaySync();",
+        "tool_complete": "powershell -c (New-Object Media.SoundPlayer 'C:\\Users\\YourName\\ClaudeCodeSounds\\tool_complete.wav').PlaySync();"
+      }
+    }
+  }
+}
