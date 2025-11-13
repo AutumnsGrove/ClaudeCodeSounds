@@ -77,7 +77,7 @@ if [ $? -eq 0 ]; then
             echo "This will add an alias to $SHELL_RC"
 
             # Try to read from terminal, default to 'y' if not interactive
-            if read -p "Add to PATH? [Y/n]: " -n 1 -r </dev/tty 2>/dev/null; then
+            if read -p "Add to PATH? [Y/n]: " -n 1 -r 2>/dev/null </dev/tty 2>&1; then
                 echo ""
                 REPLY="${REPLY:-y}"
             else
