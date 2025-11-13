@@ -118,7 +118,8 @@ The `extras/` directory contains alternative sounds you can use:
 
 - **`prompt3style/`** - More intense cyberpunk styling with enhanced digital grit
 - **`retro-terminal/`** - Classic 80s computing aesthetic with clean sine waves and nostalgic charm
-- **`drift/`** - Ambient water-inspired soundscape for transcendent flow state and deep focus (NEW!)
+- **`drift/`** - Ambient water-inspired soundscape for transcendent flow state and deep focus
+- **`void/`** - Cosmic liminal soundscape with deep space drones and stellar resonance (NEW!)
 
 ## 📊 Technical Specifications
 
@@ -236,10 +237,12 @@ ClaudeCodeSounds/
 ├── claude-code-config-example.json # Example hook configuration
 ├── generate_retro_sounds.py       # Python script for retro suite generation
 ├── generate_drift_sounds.py       # Python script for drift suite generation
+├── generate_void_sounds.py        # Python script for void suite generation
 ├── extras/                        # Alternative sound files
 ├── prompt3style/                  # Alternative cyberpunk-intense set
 ├── retro-terminal/                # Classic 80s computing sound suite
 ├── drift/                         # Ambient water/flow sound suite
+├── void/                          # Cosmic liminal space sound suite
 ├── archive/                       # Original ffmpeg-generated versions
 └── docs/                          # Generation documentation
     ├── METAPROMPT3.md
