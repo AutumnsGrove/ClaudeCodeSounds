@@ -73,27 +73,13 @@ if [ $? -eq 0 ]; then
 
     if [ -n "$SHELL_RC" ]; then
         if ! grep -q "claude-sounds-config" "$SHELL_RC" 2>/dev/null; then
-            echo "Would you like to add the configurator to your PATH?"
-            echo "This will add an alias to $SHELL_RC"
-
-            # Try to read from terminal, default to 'y' if not interactive
-            if read -p "Add to PATH? [Y/n]: " -n 1 -r 2>/dev/null </dev/tty 2>&1; then
-                echo ""
-                REPLY="${REPLY:-y}"
-            else
-                # Non-interactive or piped, default to yes
-                REPLY="y"
-                echo "y (defaulting to yes in non-interactive mode)"
-            fi
-
-            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-                echo "" >> "$SHELL_RC"
-                echo "# Claude Sounds Configurator" >> "$SHELL_RC"
-                echo "alias claude-sounds='cd $INSTALL_DIR && ./claude-sounds-config'" >> "$SHELL_RC"
-                echo "✅ Added alias to $SHELL_RC"
-                echo ""
-                echo "Run 'source $SHELL_RC' or restart your terminal"
-            fi
+            echo "📝 Adding 'claude-sounds' command to $SHELL_RC..."
+            echo "" >> "$SHELL_RC"
+            echo "# Claude Sounds Configurator" >> "$SHELL_RC"
+            echo "alias claude-sounds='cd $INSTALL_DIR && ./claude-sounds-config'" >> "$SHELL_RC"
+            echo "✅ Added 'claude-sounds' command!"
+            echo ""
+            echo "Run 'source $SHELL_RC' or restart your terminal to use it"
         fi
     fi
 
