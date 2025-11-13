@@ -76,7 +76,22 @@ type model struct {
 }
 
 // Hook types we manage (sound-related only)
-var soundHooks = []string{
+// Maps file names (snake_case) to Claude hook names (PascalCase)
+var soundHookMapping = map[string]string{
+	"session_start":      "SessionStart",
+	"session_end":        "SessionEnd",
+	"tool_start":         "PreToolUse",
+	"tool_complete":      "PostToolUse",
+	"prompt_submit":      "UserPromptSubmit",
+	"response_start":     "ResponseStart",
+	"response_end":       "ResponseEnd",
+	"subagent_done":      "SubagentStop",
+	"precompact_warning": "PreCompact",
+	"notification":       "Notification",
+}
+
+// Sound hook file names (for finding .wav files)
+var soundHookFiles = []string{
 	"session_start",
 	"session_end",
 	"tool_start",
@@ -367,9 +382,9 @@ func (m *model) applyConfiguration(suite SoundSuite) error {
 		existingHooks = make(map[string]interface{})
 	}
 
-	// Remove old sound hooks, keep everything else
-	for _, hookName := range soundHooks {
-		delete(existingHooks, hookName)
+	// Remove old sound hooks using PascalCase names, keep everything else
+	for _, claudeHookName := range soundHookMapping {
+		delete(existingHooks, claudeHookName)
 	}
 
 	// Add new sound hooks
@@ -436,8 +451,8 @@ func (m *model) generateHooks(suite SoundSuite) map[string]interface{} {
 	// Determine if we're on Windows for path formatting
 	isWindows := runtime.GOOS == "windows"
 
-	for _, hookName := range soundHooks {
-		soundFile := filepath.Join(suite.Path, hookName+".wav")
+	for _, fileHookName := range soundHookFiles {
+		soundFile := filepath.Join(suite.Path, fileHookName+".wav")
 
 		// Format path for shell
 		if isWindows {
@@ -453,10 +468,23 @@ func (m *model) generateHooks(suite SoundSuite) map[string]interface{} {
 			command = fmt.Sprintf("%s %s &", m.audioPlayer, soundFile)
 		}
 
-		hooks[hookName] = map[string]string{
-			"command":     command,
-			"description": getHookDescription(hookName),
+		// Get the Claude hook name (PascalCase)
+		claudeHookName := soundHookMapping[fileHookName]
+
+		// Create the proper nested structure that Claude expects:
+		// "SessionStart": [{"hooks": [{"type": "command", "command": "..."}]}]
+		hookConfig := []interface{}{
+			map[string]interface{}{
+				"hooks": []interface{}{
+					map[string]interface{}{
+						"type":    "command",
+						"command": command,
+					},
+				},
+			},
 		}
+
+		hooks[claudeHookName] = hookConfig
 	}
 
 	return hooks
