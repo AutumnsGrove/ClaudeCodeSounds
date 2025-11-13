@@ -105,6 +105,36 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
    - Linux: `aplay` or `paplay`
    - Windows: `powershell -c (New-Object Media.SoundPlayer 'path\to\sound.wav').PlaySync();`
 
+### 🎨 Interactive Configurator (Recommended!)
+
+**NEW**: We now provide a beautiful TUI (Terminal User Interface) configurator that makes setup a breeze!
+
+The configurator will:
+- ✨ Let you browse and preview all sound themes interactively
+- 🎵 Play preview sounds so you can hear before you apply
+- 🔍 Auto-detect your system's audio player
+- 💾 Automatically backup your existing settings
+- 🛡️ Safely update only sound hooks (preserves your other hooks!)
+
+**Quick Start:**
+
+```bash
+# From the ClaudeCodeSounds directory
+go run main.go
+
+# Or build and run:
+go build -o claude-sounds-config main.go
+./claude-sounds-config
+```
+
+**Controls:**
+- ↑/↓ - Navigate themes
+- P or Space - Preview the theme
+- Enter - Apply the theme
+- Q - Quit
+
+See [CONFIGURATOR.md](CONFIGURATOR.md) for detailed documentation.
+
 ### Customization
 
 The `extras/` directory contains alternative sounds you can use:
@@ -234,6 +264,11 @@ ClaudeCodeSounds/
 ├── *.wav                          # Main audio files (10 hooks)
 ├── README.md                      # This file
 ├── LICENSE                        # MIT License
+├── CONFIGURATOR.md                # Configurator documentation
+├── main.go                        # TUI configurator source code
+├── go.mod                         # Go module definition
+├── go.sum                         # Go dependencies
+├── claude-sounds-config           # Compiled configurator binary (after build)
 ├── claude-code-config-example.json # Example hook configuration
 ├── generate_retro_sounds.py       # Python script for retro suite generation
 ├── generate_drift_sounds.py       # Python script for drift suite generation

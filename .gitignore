@@ -21,3 +21,7 @@ backup_*/
 
 # System files
 Thumbs.db
+
+# Go binary and build artifacts
+claude-sounds-config
+claude-sounds-config.exe
