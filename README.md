@@ -64,22 +64,38 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
 
 ## 🔧 Integration with Claude Code
 
-### Quick Setup
+### 🚀 Quick Start (One-Liner)
+
+**The fastest way to get started:**
+
+```bash
+curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/main/web-install.sh | bash
+```
+
+This will:
+- Clone the repository to `~/.claude-sounds`
+- Build the interactive configurator
+- Optionally add a `claude-sounds` command to your shell
+
+Then just run `claude-sounds` (or `cd ~/.claude-sounds && ./claude-sounds-config`) to configure your themes!
+
+### Manual Setup
+
+If you prefer to set up manually:
 
 1. **Clone or download this repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/AutumnsGrove/ClaudeCodeSounds.git
    cd ClaudeCodeSounds
    ```
 
-2. **Copy the audio files to your preferred location**
+2. **Use the interactive configurator (recommended)**
    ```bash
-   # Example: Copy to a sounds directory
-   mkdir -p ~/ClaudeCodeSounds
-   cp *.wav ~/ClaudeCodeSounds/
+   go run main.go
+   # Or: ./install.sh for a full installation
    ```
 
-3. **Configure Claude Code hooks**
+3. **Or manually configure hooks**
 
    Copy the example configuration from `claude-code-config-example.json` and add it to your Claude Code settings:
 
@@ -104,6 +120,38 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
    - macOS: `afplay`
    - Linux: `aplay` or `paplay`
    - Windows: `powershell -c (New-Object Media.SoundPlayer 'path\to\sound.wav').PlaySync();`
+
+### 🎨 Interactive Configurator (Recommended!)
+
+**NEW**: We now provide a beautiful TUI (Terminal User Interface) configurator that makes setup a breeze!
+
+The configurator will:
+- ✨ Let you browse and preview all sound themes interactively
+- 🎵 Play preview sounds so you can hear before you apply
+- 🔍 Auto-detect your system's audio player
+- 💾 Automatically backup your existing settings
+- 🛡️ Safely update only sound hooks (preserves your other hooks!)
+
+**Quick Start:**
+
+```bash
+# From the ClaudeCodeSounds directory
+go run main.go
+
+# Or build and run:
+go build -o claude-sounds-config main.go
+./claude-sounds-config
+```
+
+**Controls:**
+- ↑/↓ - Navigate themes
+- P or Space - Preview the theme (plays session_start.wav)
+- Enter - Select theme (shows confirmation dialog)
+- Y - Confirm and save changes
+- N/ESC - Cancel and return to list
+- Q - Quit without saving
+
+See [CONFIGURATOR.md](CONFIGURATOR.md) for detailed documentation.
 
 ### Customization
 
@@ -234,6 +282,11 @@ ClaudeCodeSounds/
 ├── *.wav                          # Main audio files (10 hooks)
 ├── README.md                      # This file
 ├── LICENSE                        # MIT License
+├── CONFIGURATOR.md                # Configurator documentation
+├── main.go                        # TUI configurator source code
+├── go.mod                         # Go module definition
+├── go.sum                         # Go dependencies
+├── claude-sounds-config           # Compiled configurator binary (after build)
 ├── claude-code-config-example.json # Example hook configuration
 ├── generate_retro_sounds.py       # Python script for retro suite generation
 ├── generate_drift_sounds.py       # Python script for drift suite generation
