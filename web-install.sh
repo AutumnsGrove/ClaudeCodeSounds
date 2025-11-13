@@ -75,7 +75,7 @@ if [ $? -eq 0 ]; then
         if ! grep -q "claude-sounds-config" "$SHELL_RC" 2>/dev/null; then
             echo "Would you like to add the configurator to your PATH?"
             echo "This will add an alias to $SHELL_RC"
-            read -p "Add to PATH? [Y/n]: " -n 1 -r
+            read -p "Add to PATH? [Y/n]: " -n 1 -r </dev/tty
             echo ""
 
             if [[ ! $REPLY =~ ^[Nn]$ ]]; then
