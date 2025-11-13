@@ -69,7 +69,7 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
 **The fastest way to get started:**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/main/web-install.sh | bash
+curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/master/web-install.sh | bash
 ```
 
 This will:

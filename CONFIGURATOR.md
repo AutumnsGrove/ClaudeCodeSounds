@@ -18,7 +18,7 @@ A beautiful terminal user interface (TUI) for easily configuring Claude Code sou
 The fastest way to get started:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/main/web-install.sh | bash
+curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/master/web-install.sh | bash
 ```
 
 This will:

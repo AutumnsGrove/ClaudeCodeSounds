@@ -1,6 +1,6 @@
 #!/bin/bash
 # Quick installer for Claude Sounds Configurator
-# Usage: curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/main/web-install.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/master/web-install.sh | bash
 
 set -e
 

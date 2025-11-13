@@ -6,6 +6,7 @@
 # Backup directories
 backup_*/
 ../backup_*/
+archive/pre-compression-*/
 
 # Temporary files
 *.tmp
