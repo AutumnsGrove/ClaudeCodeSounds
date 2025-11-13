@@ -67,6 +67,8 @@ type model struct {
 	repoPath        string
 	choice          string
 	quitting        bool
+	confirming      bool
+	selectedSuite   *SoundSuite
 	err             error
 	success         bool
 	lastPreview     string
@@ -155,25 +157,46 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
+		// Handle confirmation mode
+		if m.confirming {
+			switch keypress := msg.String(); keypress {
+			case "y", "Y":
+				// User confirmed, apply the configuration
+				if m.selectedSuite != nil {
+					m.choice = m.selectedSuite.Name
+					err := m.applyConfiguration(*m.selectedSuite)
+					if err != nil {
+						m.err = err
+						m.success = false
+					} else {
+						m.success = true
+					}
+					m.quitting = true
+					return m, tea.Quit
+				}
+			case "n", "N", "esc":
+				// User cancelled, go back to list
+				m.confirming = false
+				m.selectedSuite = nil
+				return m, nil
+			}
+			return m, nil
+		}
+
+		// Normal mode
 		switch keypress := msg.String(); keypress {
 		case "ctrl+c", "q":
 			m.quitting = true
 			return m, tea.Quit
 
 		case "enter":
+			// Enter confirmation mode
 			i, ok := m.list.SelectedItem().(SoundSuite)
 			if ok {
-				m.choice = i.Name
-				// Apply the configuration
-				err := m.applyConfiguration(i)
-				if err != nil {
-					m.err = err
-					m.success = false
-				} else {
-					m.success = true
-				}
-				m.quitting = true
-				return m, tea.Quit
+				m.confirming = true
+				suite := i // Make a copy
+				m.selectedSuite = &suite
+				return m, nil
 			}
 
 		case "p", " ":
@@ -206,7 +229,34 @@ func (m model) View() string {
 		return "\nGoodbye!\n"
 	}
 
-	help := descStyle.Render("\n  ↑/↓: navigate  •  enter: apply  •  p/space: preview  •  q: quit\n")
+	// Show confirmation dialog
+	if m.confirming && m.selectedSuite != nil {
+		confirmStyle := lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D56F4")).
+			Padding(1, 2).
+			MarginTop(2).
+			MarginLeft(2)
+
+		confirmTitle := titleStyle.Render("💾 Confirm Theme Change")
+		confirmMsg := fmt.Sprintf("\nApply '%s' theme?\n", m.selectedSuite.Name)
+		confirmDesc := descStyle.Render(fmt.Sprintf("  %s\n", m.selectedSuite.Desc))
+		confirmActions := "\n  This will:\n" +
+			"  • Create a backup of your current settings\n" +
+			"  • Update all 10 sound hooks\n" +
+			"  • Preserve your other custom hooks\n\n"
+		confirmPrompt := successStyle.Render("  Press Y to save and apply") + " • " +
+			errorStyle.Render("N or ESC to cancel") + "\n"
+
+		confirmBox := confirmStyle.Render(
+			confirmTitle + confirmMsg + confirmDesc + confirmActions + confirmPrompt,
+		)
+
+		return "\n" + confirmBox + "\n"
+	}
+
+	// Normal list view
+	help := descStyle.Render("\n  ↑/↓: navigate  •  enter: select  •  p/space: preview  •  q: quit\n")
 	player := descStyle.Render(fmt.Sprintf("  Audio player: %s\n", m.audioPlayer))
 
 	preview := ""

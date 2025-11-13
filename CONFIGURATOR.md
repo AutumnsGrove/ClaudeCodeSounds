@@ -13,33 +13,55 @@ A beautiful terminal user interface (TUI) for easily configuring Claude Code sou
 
 ## 🚀 Quick Start
 
+### One-Liner Installation (Recommended)
+
+The fastest way to get started:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/AutumnsGrove/ClaudeCodeSounds/main/web-install.sh | bash
+```
+
+This will:
+- Clone the repository to `~/.claude-sounds`
+- Build the configurator automatically
+- Optionally add a `claude-sounds` command to your shell
+
+Then just run:
+```bash
+claude-sounds
+# or
+cd ~/.claude-sounds && ./claude-sounds-config
+```
+
 ### Prerequisites
 
-1. **Go 1.21 or higher** (if building from source)
+1. **Go 1.21 or higher**
 2. **Audio player** installed:
    - **macOS**: `afplay` (built-in)
    - **Linux**: `aplay` (alsa-utils) or `paplay` (pulseaudio-utils)
    - **Windows**: PowerShell (built-in)
 
-### Running the Configurator
+### Manual Installation
 
 #### Option 1: Run from Source (Development)
 
 ```bash
-# From the ClaudeCodeSounds directory
+# Clone and enter the repository
+git clone https://github.com/AutumnsGrove/ClaudeCodeSounds.git
+cd ClaudeCodeSounds
+
+# Run directly
 go run main.go
 ```
 
 #### Option 2: Build and Install
 
 ```bash
-# Build the binary
+# Use the installer script
+./install.sh
+
+# Or manually build
 go build -o claude-sounds-config main.go
-
-# Make it executable (Unix-like systems)
-chmod +x claude-sounds-config
-
-# Run it
 ./claude-sounds-config
 
 # Optional: Install globally
@@ -51,21 +73,29 @@ claude-sounds-config
 
 ### Navigation
 
+**Browsing Mode:**
 - **↑/↓ Arrow Keys** - Navigate through sound themes
-- **Enter** - Apply the selected theme
 - **P or Space** - Preview the selected theme (plays session_start.wav)
+- **Enter** - Select theme and show confirmation dialog
 - **Q or Ctrl+C** - Quit without making changes
+
+**Confirmation Dialog:**
+- **Y** - Confirm and save changes
+- **N or ESC** - Cancel and return to theme list
 
 ### Applying a Theme
 
 1. Launch the configurator
-2. Use arrow keys to browse available themes
-3. Press **P** or **Space** to preview a theme
-4. Press **Enter** to apply your chosen theme
-5. The tool will:
+2. Use **↑/↓** arrow keys to browse available themes
+3. Press **P** or **Space** to preview a theme's sound
+4. Press **Enter** when you find the theme you want
+5. A confirmation dialog appears showing what will change
+6. Press **Y** to confirm or **N** to cancel
+7. On confirmation, the tool will:
    - Create a backup at `~/.claude/settings.json.backup_TIMESTAMP`
    - Update your sound hooks
    - Preserve all other hooks and settings
+   - Show a success message
 
 ## 🎨 Available Themes
 
