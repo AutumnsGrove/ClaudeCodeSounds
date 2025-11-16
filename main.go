@@ -77,28 +77,26 @@ type model struct {
 
 // Hook types we manage (sound-related only)
 // Maps file names (snake_case) to Claude hook names (PascalCase)
+// Only includes hooks that Claude Code actually supports
 var soundHookMapping = map[string]string{
 	"session_start":      "SessionStart",
 	"session_end":        "SessionEnd",
 	"tool_start":         "PreToolUse",
 	"tool_complete":      "PostToolUse",
 	"prompt_submit":      "UserPromptSubmit",
-	"response_start":     "ResponseStart",
-	"response_end":       "ResponseEnd",
 	"subagent_done":      "SubagentStop",
 	"precompact_warning": "PreCompact",
 	"notification":       "Notification",
 }
 
 // Sound hook file names (for finding .wav files)
+// Note: response_start and response_end sound files exist but Claude doesn't support those hooks
 var soundHookFiles = []string{
 	"session_start",
 	"session_end",
 	"tool_start",
 	"tool_complete",
 	"prompt_submit",
-	"response_start",
-	"response_end",
 	"subagent_done",
 	"precompact_warning",
 	"notification",
@@ -258,7 +256,7 @@ func (m model) View() string {
 		confirmDesc := descStyle.Render(fmt.Sprintf("  %s\n", m.selectedSuite.Desc))
 		confirmActions := "\n  This will:\n" +
 			"  • Create a backup of your current settings\n" +
-			"  • Update all 10 sound hooks\n" +
+			"  • Update all 8 sound hooks\n" +
 			"  • Preserve your other custom hooks\n\n"
 		confirmPrompt := successStyle.Render("  Press Y to save and apply") + " • " +
 			errorStyle.Render("N or ESC to cancel") + "\n"
@@ -382,9 +380,10 @@ func (m *model) applyConfiguration(suite SoundSuite) error {
 		existingHooks = make(map[string]interface{})
 	}
 
-	// Remove old sound hooks using PascalCase names, keep everything else
-	for _, claudeHookName := range soundHookMapping {
-		delete(existingHooks, claudeHookName)
+	// Remove old sound hooks (both PascalCase AND lowercase), keep everything else
+	for fileHookName, claudeHookName := range soundHookMapping {
+		delete(existingHooks, claudeHookName) // Delete PascalCase version
+		delete(existingHooks, fileHookName)   // Delete old lowercase version
 	}
 
 	// Add new sound hooks

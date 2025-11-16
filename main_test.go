@@ -109,14 +109,14 @@ func TestHookStructure(t *testing.T) {
 
 // TestHookNameMapping verifies the mapping is correct
 func TestHookNameMapping(t *testing.T) {
+	// Only includes hooks that Claude Code actually supports
+	// ResponseStart and ResponseEnd are not supported by Claude Code
 	expectedMappings := map[string]string{
 		"session_start":      "SessionStart",
 		"session_end":        "SessionEnd",
 		"tool_start":         "PreToolUse",
 		"tool_complete":      "PostToolUse",
 		"prompt_submit":      "UserPromptSubmit",
-		"response_start":     "ResponseStart",
-		"response_end":       "ResponseEnd",
 		"subagent_done":      "SubagentStop",
 		"precompact_warning": "PreCompact",
 		"notification":       "Notification",
