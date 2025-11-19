@@ -4,7 +4,7 @@ A complete set of professional audio files designed specifically for Claude Code
 
 ## 🎵 Overview
 
-This repository contains 10 high-quality `.wav` audio files optimized for Claude Code's hook system. Each sound provides subtle, non-intrusive feedback for different UI events, creating an immersive coding experience inspired by Watch Dogs 2's cyberpunk aesthetic and the feeling of being "trapped in vim."
+This repository contains 13 high-quality `.wav` audio files optimized for Claude Code's hook system (11 supported hooks + 2 legacy files). Each sound provides subtle, non-intrusive feedback for different UI events, creating an immersive coding experience inspired by Watch Dogs 2's cyberpunk aesthetic and the feeling of being "trapped in vim."
 
 ## 📦 Audio Files
 
@@ -30,6 +30,24 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
   - Memory deallocation sweep
   - ASCII pattern: `[████] ✓ complete`
 
+### Agent Lifecycle
+- **`stop.wav`** (0.4s) - Main agent concludes its response (Ctrl+D)
+  - Final thought crystallization
+  - Descending resolution pattern
+  - Graceful conclusion without full logout
+  - ASCII pattern: `^D [End of Input]`
+
+- **`subagent_start.wav`** (0.25s) - Subagent initialization (subprocess fork)
+  - Child process spawning
+  - Ascending startup tone (pairs with subagent_done)
+  - Brief initialization sound
+  - ASCII pattern: `fork() -> pid:1234 [spawned]`
+
+- **`subagent_done.wav`** (1.0s) - Subagent completion (child process returns)
+  - Triumphant achievement chord
+  - Successful compilation celebration
+  - Process completion confirmation
+
 ### Communication Events
 - **`prompt_submit.wav`** (0.1s) - Keystroke echoes in the void
   - Quick click/submit sound (`:w` in vim)
@@ -47,11 +65,6 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
   - ASCII pattern: `>>>> transmission complete`
 
 ### Special Events
-- **`subagent_done.wav`** (1.0s) - Child process returns to parent
-  - Triumphant achievement chord
-  - Successful compilation celebration
-  - Process completion confirmation
-
 - **`precompact_warning.wav`** (1.2s) - Memory pressure, swap approaching
   - Attention-getting warning tone
   - Oscillating low frequency alarm
@@ -61,6 +74,18 @@ This repository contains 10 high-quality `.wav` audio files optimized for Claude
   - Balanced general alert
   - Modern take on terminal bell (^G)
   - ASCII pattern: `!!! [ALERT] !!!`
+
+- **`permission_request.wav`** (0.45s) - Permission dialog / sudo prompt
+  - Authentication required alert
+  - Questioning/paused tone for user approval
+  - Attention-getting but not alarming
+  - ASCII pattern: `[sudo] password for user:`
+
+### Legacy Files (Not Currently Supported)
+- **`response_start.wav`** - Previously used for response start events (hook removed from Claude Code)
+- **`response_end.wav`** - Previously used for response end events (hook removed from Claude Code)
+
+*Note: These files are kept for backwards compatibility but are not mapped to active hooks.*
 
 ## 🔧 Integration with Claude Code
 
@@ -102,16 +127,17 @@ If you prefer to set up manually:
    ```json
    {
      "hooks": {
-       "session_start": "afplay ~/ClaudeCodeSounds/session_start.wav &",
-       "session_end": "afplay ~/ClaudeCodeSounds/session_end.wav &",
-       "tool_start": "afplay ~/ClaudeCodeSounds/tool_start.wav &",
-       "tool_complete": "afplay ~/ClaudeCodeSounds/tool_complete.wav &",
-       "prompt_submit": "afplay ~/ClaudeCodeSounds/prompt_submit.wav &",
-       "response_start": "afplay ~/ClaudeCodeSounds/response_start.wav &",
-       "response_end": "afplay ~/ClaudeCodeSounds/response_end.wav &",
-       "subagent_done": "afplay ~/ClaudeCodeSounds/subagent_done.wav &",
-       "precompact_warning": "afplay ~/ClaudeCodeSounds/precompact_warning.wav &",
-       "notification": "afplay ~/ClaudeCodeSounds/notification.wav &"
+       "SessionStart": "afplay ~/ClaudeCodeSounds/Classic/session_start.wav &",
+       "SessionEnd": "afplay ~/ClaudeCodeSounds/Classic/session_end.wav &",
+       "PreToolUse": "afplay ~/ClaudeCodeSounds/Classic/tool_start.wav &",
+       "PostToolUse": "afplay ~/ClaudeCodeSounds/Classic/tool_complete.wav &",
+       "UserPromptSubmit": "afplay ~/ClaudeCodeSounds/Classic/prompt_submit.wav &",
+       "Stop": "afplay ~/ClaudeCodeSounds/Classic/stop.wav &",
+       "SubagentStart": "afplay ~/ClaudeCodeSounds/Classic/subagent_start.wav &",
+       "SubagentStop": "afplay ~/ClaudeCodeSounds/Classic/subagent_done.wav &",
+       "PreCompact": "afplay ~/ClaudeCodeSounds/Classic/precompact_warning.wav &",
+       "Notification": "afplay ~/ClaudeCodeSounds/Classic/notification.wav &",
+       "PermissionRequest": "afplay ~/ClaudeCodeSounds/Classic/permission_request.wav &"
      }
    }
    ```
@@ -162,12 +188,15 @@ The `extras/` directory contains alternative sounds you can use:
 - `Item Throw.wav` - Quick action sound
 - `Secret Unlocked.wav` - Special event notification
 
-#### Alternative Sound Suites
+#### Sound Theme Suites
 
-- **`prompt3style/`** - More intense cyberpunk styling with enhanced digital grit
-- **`retro-terminal/`** - Classic 80s computing aesthetic with clean sine waves and nostalgic charm
-- **`drift/`** - Ambient water-inspired soundscape for transcendent flow state and deep focus
-- **`void/`** - Cosmic liminal soundscape with deep space drones and stellar resonance (NEW!)
+- **`Classic/`** - Terminal Native (default) - Cyberpunk command-line aesthetic with Watch Dogs 2 vibes
+- **`prompt3style/`** - Cyberpunk Intense - Enhanced digital grit and aggressive styling
+- **`retro-terminal/`** - Classic 80s computing - Clean sine waves and nostalgic charm
+- **`drift/`** - Ambient Water - Flow state soundscape for deep focus and transcendence
+- **`void/`** - Cosmic Liminal - Deep space drones and stellar resonance
+
+Each theme includes a VIBE.md file describing its design philosophy and creation process.
 
 ## 📊 Technical Specifications
 
@@ -179,7 +208,7 @@ All audio files meet professional standards:
 - **Channels**: Mono (1 channel)
 - **Fade Effects**: Gentle fade-in/out to prevent audio clicks
 - **Volume**: Balanced at 0.3-0.7 for non-intrusive use
-- **Total Size**: ~766 KB for all 10 files
+- **Total Size**: ~950 KB for all 13 files (per theme)
 
 ### File Sizes
 - Largest: `session_end.wav` (190 KB)
@@ -248,18 +277,19 @@ Place hooks in your Claude Code settings file (typically `~/.claude/config.json`
 {
   "audioHooks": {
     "enabled": true,
-    "soundDirectory": "~/ClaudeCodeSounds",
+    "soundDirectory": "~/ClaudeCodeSounds/Classic",
     "hooks": {
-      "session_start": "session_start.wav",
-      "session_end": "session_end.wav",
-      "tool_start": "tool_start.wav",
-      "tool_complete": "tool_complete.wav",
-      "prompt_submit": "prompt_submit.wav",
-      "response_start": "response_start.wav",
-      "response_end": "response_end.wav",
-      "subagent_done": "subagent_done.wav",
-      "precompact_warning": "precompact_warning.wav",
-      "notification": "notification.wav"
+      "SessionStart": "session_start.wav",
+      "SessionEnd": "session_end.wav",
+      "PreToolUse": "tool_start.wav",
+      "PostToolUse": "tool_complete.wav",
+      "UserPromptSubmit": "prompt_submit.wav",
+      "Stop": "stop.wav",
+      "SubagentStart": "subagent_start.wav",
+      "SubagentStop": "subagent_done.wav",
+      "PreCompact": "precompact_warning.wav",
+      "Notification": "notification.wav",
+      "PermissionRequest": "permission_request.wav"
     }
   }
 }
@@ -279,7 +309,6 @@ Each sound has been verified for:
 
 ```
 ClaudeCodeSounds/
-├── *.wav                          # Main audio files (10 hooks)
 ├── README.md                      # This file
 ├── LICENSE                        # MIT License
 ├── CONFIGURATOR.md                # Configurator documentation
@@ -288,14 +317,19 @@ ClaudeCodeSounds/
 ├── go.sum                         # Go dependencies
 ├── claude-sounds-config           # Compiled configurator binary (after build)
 ├── claude-code-config-example.json # Example hook configuration
-├── generate_retro_sounds.py       # Python script for retro suite generation
-├── generate_drift_sounds.py       # Python script for drift suite generation
-├── generate_void_sounds.py        # Python script for void suite generation
-├── extras/                        # Alternative sound files
-├── prompt3style/                  # Alternative cyberpunk-intense set
-├── retro-terminal/                # Classic 80s computing sound suite
-├── drift/                         # Ambient water/flow sound suite
-├── void/                          # Cosmic liminal space sound suite
+├── Classic/                       # Terminal Native theme (default - 13 files)
+│   ├── *.wav                      # 11 active hooks + 2 legacy files
+│   └── VIBE.md                    # Theme design philosophy
+├── scripts/                       # Sound generation scripts
+│   ├── generate_retro_sounds.py   # Retro terminal generator
+│   ├── generate_drift_sounds.py   # Drift ambient generator
+│   ├── generate_void_sounds.py    # Void cosmic generator
+│   └── generate_new_hooks.py      # New hooks generator
+├── prompt3style/                  # Cyberpunk Intense theme (13 files + VIBE.md)
+├── retro-terminal/                # Classic 80s theme (13 files + README.md + VIBE.md)
+├── drift/                         # Ambient water theme (13 files + README.md + VIBE.md)
+├── void/                          # Cosmic liminal theme (13 files + VIBE.md)
+├── extras/                        # Experimental/alternative sounds
 ├── archive/                       # Original ffmpeg-generated versions
 └── docs/                          # Generation documentation
     ├── METAPROMPT3.md

@@ -84,9 +84,12 @@ var soundHookMapping = map[string]string{
 	"tool_start":         "PreToolUse",
 	"tool_complete":      "PostToolUse",
 	"prompt_submit":      "UserPromptSubmit",
+	"stop":               "Stop",
+	"subagent_start":     "SubagentStart",
 	"subagent_done":      "SubagentStop",
 	"precompact_warning": "PreCompact",
 	"notification":       "Notification",
+	"permission_request": "PermissionRequest",
 }
 
 // Sound hook file names (for finding .wav files)
@@ -97,9 +100,12 @@ var soundHookFiles = []string{
 	"tool_start",
 	"tool_complete",
 	"prompt_submit",
+	"stop",
+	"subagent_start",
 	"subagent_done",
 	"precompact_warning",
 	"notification",
+	"permission_request",
 }
 
 func main() {

@@ -10,13 +10,16 @@ Generate audio hooks that feel like you're experiencing sound from within the te
 1. **session_start.wav**: Terminal awakening - like SSH-ing into your own consciousness
 2. **prompt_submit.wav**: Keystroke echoes in the void (`:w` in vim)
 3. **tool_start.wav**: Process spawning, threads initializing
-4. **response_start.wav**: Data streams beginning to flow
-5. **response_end.wav**: Buffer flush, output complete
-6. **tool_complete.wav**: Successful compilation, exit code 0
-7. **subagent_done.wav**: Child process returns to parent
-8. **notification.wav**: System interrupt, SIGINFO
-9. **precompact_warning.wav**: Memory pressure, swap approaching
-10. **session_end.wav**: Graceful logout, connection closed
+4. **tool_complete.wav**: Successful compilation, exit code 0
+5. **stop.wav**: Main agent concludes, thoughts crystallize (Ctrl+D)
+6. **subagent_start.wav**: Subprocess fork(), child process awakens
+7. **subagent_done.wav**: Child process returns to parent, exit status 0
+8. **permission_request.wav**: System requires auth, sudo prompt appears
+9. **notification.wav**: System interrupt, SIGINFO
+10. **precompact_warning.wav**: Memory pressure, swap approaching
+11. **session_end.wav**: Graceful logout, connection closed
+
+**Note**: `response_start` and `response_end` hooks were removed from Claude Code but sound files may still exist for backwards compatibility.
 
 ## ASCII-to-Audio Translation System
 
@@ -165,6 +168,18 @@ ffmpeg -y \
 - Memory deallocation sweep
 - ASCII pattern: `[████] ✓ complete`
 
+**stop.wav** - "Main agent conclusion (Ctrl+D)"
+- Final thought crystallization
+- Descending resolution pattern
+- Graceful shutdown without full logout
+- ASCII pattern: `^D [End of Input]`
+
+**subagent_start.wav** - "Subprocess fork()"
+- Child process initialization
+- Ascending startup tone (opposite of subagent_done)
+- Brief, quick spawn sound
+- ASCII pattern: `fork() -> pid:1234 [spawned]`
+
 ### Subagent 3: Data Flow Specialist
 **Mission**: Network and I/O operations as sound
 
@@ -191,6 +206,12 @@ ffmpeg -y \
 - Memory pressure alarm
 - Oscillating low frequency
 - ASCII pattern: `[WARNING: 95% memory]`
+
+**permission_request.wav** - "Sudo password prompt"
+- Authentication required alert
+- Questioning/paused tone
+- Attention-getting but not alarming
+- ASCII pattern: `[sudo] password for user:`
 
 ## ASCII Art Audio Mapping Reference
 
