@@ -253,8 +253,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.lastPreview = i.Name
 				m.previewing = true
 				m.previewTotal = len(soundHookFiles)
-				// Set cooldown to total preview time (11 sounds * 0.5s delay + buffer)
-				m.previewCooldown = time.Now().Add(8 * time.Second)
+				// Set cooldown to total preview time (11 sounds * 0.25s delay + buffer)
+				m.previewCooldown = time.Now().Add(5 * time.Second)
 				// Start with the first sound
 				return m, func() tea.Msg {
 					return previewSoundMsg{
@@ -398,8 +398,8 @@ func (m *model) playSoundAndNext(msg previewSoundMsg) tea.Cmd {
 		cmd := exec.Command(m.audioPlayer, soundPath)
 		cmd.Run() // Wait for sound to complete
 
-		// Wait 0.5 seconds before next sound
-		time.Sleep(500 * time.Millisecond)
+		// Wait 0.25 seconds before next sound
+		time.Sleep(250 * time.Millisecond)
 
 		// If there are more sounds, schedule the next one
 		if msg.index+1 < msg.total {
