@@ -59,24 +59,35 @@ func (s SoundSuite) Title() string       { return s.Name }
 func (s SoundSuite) Description() string { return s.Desc }
 func (s SoundSuite) FilterValue() string { return s.Name }
 
+// previewSoundMsg is sent when playing each sound in the sequence
+type previewSoundMsg struct {
+	soundName string
+	index     int
+	total     int
+	suite     SoundSuite
+}
+
 // previewDoneMsg is sent when the entire preview sequence completes
 type previewDoneMsg struct{}
 
 // Model represents the application state
 type model struct {
-	list            list.Model
-	suites          []SoundSuite
-	audioPlayer     string
-	repoPath        string
-	choice          string
-	quitting        bool
-	confirming      bool
-	selectedSuite   *SoundSuite
-	err             error
-	success         bool
-	lastPreview     string
-	previewCooldown time.Time
-	previewing      bool
+	list             list.Model
+	suites           []SoundSuite
+	audioPlayer      string
+	repoPath         string
+	choice           string
+	quitting         bool
+	confirming       bool
+	selectedSuite    *SoundSuite
+	err              error
+	success          bool
+	lastPreview      string
+	previewCooldown  time.Time
+	previewing       bool
+	previewSoundName string
+	previewIndex     int
+	previewTotal     int
 }
 
 // Hook types we manage (sound-related only)
@@ -175,9 +186,17 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case previewSoundMsg:
+		// Update UI with current sound, then play it and schedule next
+		m.previewSoundName = msg.soundName
+		m.previewIndex = msg.index
+		m.previewTotal = msg.total
+		return m, m.playSoundAndNext(msg)
+
 	case previewDoneMsg:
 		// Preview complete
 		m.previewing = false
+		m.previewSoundName = ""
 		return m, nil
 
 	case tea.WindowSizeMsg:
@@ -233,9 +252,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if ok && time.Now().After(m.previewCooldown) && !m.previewing {
 				m.lastPreview = i.Name
 				m.previewing = true
-				// Set cooldown to total preview time (11 sounds * 1s delay + buffer)
-				m.previewCooldown = time.Now().Add(15 * time.Second)
-				return m, m.playAllSoundsPreview(i)
+				m.previewTotal = len(soundHookFiles)
+				// Set cooldown to total preview time (11 sounds * 0.5s delay + buffer)
+				m.previewCooldown = time.Now().Add(8 * time.Second)
+				// Start with the first sound
+				return m, func() tea.Msg {
+					return previewSoundMsg{
+						soundName: soundHookMapping[soundHookFiles[0]],
+						index:     0,
+						total:     len(soundHookFiles),
+						suite:     i,
+					}
+				}
 			}
 		}
 
@@ -290,9 +318,9 @@ func (m model) View() string {
 	player := descStyle.Render(fmt.Sprintf("  Audio player: %s\n", m.audioPlayer))
 
 	preview := ""
-	if m.previewing {
-		// Show preview in progress
-		preview = successStyle.Render(fmt.Sprintf("  🔊 Previewing all sounds from '%s'... (11 sounds with 1s delays)\n", m.lastPreview))
+	if m.previewing && m.previewSoundName != "" {
+		// Show which sound is currently playing
+		preview = successStyle.Render(fmt.Sprintf("  🔊 Playing: %s (%d/%d)\n", m.previewSoundName, m.previewIndex+1, m.previewTotal))
 	} else if m.lastPreview != "" {
 		preview = descStyle.Render(fmt.Sprintf("  Last preview: %s\n", m.lastPreview))
 	}
@@ -360,26 +388,31 @@ func scanSoundSuites(repoPath string) []SoundSuite {
 	return available
 }
 
-// playAllSoundsPreview plays all sounds in sequence with 1s delays
-func (m *model) playAllSoundsPreview(suite SoundSuite) tea.Cmd {
+// playSoundAndNext plays the current sound and schedules the next one
+func (m *model) playSoundAndNext(msg previewSoundMsg) tea.Cmd {
 	return func() tea.Msg {
-		// Play all sounds sequentially with 1-second delays
-		for i, soundFile := range soundHookFiles {
-			soundPath := filepath.Join(suite.Path, soundFile+".wav")
+		// Play the current sound
+		soundFile := soundHookFiles[msg.index]
+		soundPath := filepath.Join(msg.suite.Path, soundFile+".wav")
 
-			// Play the sound and wait for it to complete
-			cmd := exec.Command(m.audioPlayer, soundPath)
-			if err := cmd.Run(); err != nil {
-				// Skip this sound if there's an error playing it
-				continue
-			}
+		cmd := exec.Command(m.audioPlayer, soundPath)
+		cmd.Run() // Wait for sound to complete
 
-			// Wait 1 second before next sound (except after the last one)
-			if i < len(soundHookFiles)-1 {
-				time.Sleep(1 * time.Second)
+		// Wait 0.5 seconds before next sound
+		time.Sleep(500 * time.Millisecond)
+
+		// If there are more sounds, schedule the next one
+		if msg.index+1 < msg.total {
+			nextIndex := msg.index + 1
+			return previewSoundMsg{
+				soundName: soundHookMapping[soundHookFiles[nextIndex]],
+				index:     nextIndex,
+				total:     msg.total,
+				suite:     msg.suite,
 			}
 		}
 
+		// All done
 		return previewDoneMsg{}
 	}
 }
