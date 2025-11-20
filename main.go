@@ -59,6 +59,9 @@ func (s SoundSuite) Title() string       { return s.Name }
 func (s SoundSuite) Description() string { return s.Desc }
 func (s SoundSuite) FilterValue() string { return s.Name }
 
+// previewDoneMsg is sent when the entire preview sequence completes
+type previewDoneMsg struct{}
+
 // Model represents the application state
 type model struct {
 	list            list.Model
@@ -73,6 +76,7 @@ type model struct {
 	success         bool
 	lastPreview     string
 	previewCooldown time.Time
+	previewing      bool
 }
 
 // Hook types we manage (sound-related only)
@@ -171,6 +175,11 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case previewDoneMsg:
+		// Preview complete
+		m.previewing = false
+		return m, nil
+
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
 		return m, nil
@@ -219,12 +228,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "p", " ":
-			// Preview sound on 'p' or spacebar
+			// Preview all sounds on 'p' or spacebar
 			i, ok := m.list.SelectedItem().(SoundSuite)
-			if ok && time.Now().After(m.previewCooldown) {
+			if ok && time.Now().After(m.previewCooldown) && !m.previewing {
 				m.lastPreview = i.Name
-				m.previewCooldown = time.Now().Add(1 * time.Second)
-				go m.playPreview(i)
+				m.previewing = true
+				// Set cooldown to total preview time (11 sounds * 1s delay + buffer)
+				m.previewCooldown = time.Now().Add(15 * time.Second)
+				return m, m.playAllSoundsPreview(i)
 			}
 		}
 
@@ -262,7 +273,7 @@ func (m model) View() string {
 		confirmDesc := descStyle.Render(fmt.Sprintf("  %s\n", m.selectedSuite.Desc))
 		confirmActions := "\n  This will:\n" +
 			"  • Create a backup of your current settings\n" +
-			"  • Update all 8 sound hooks\n" +
+			"  • Update all 11 sound hooks\n" +
 			"  • Preserve your other custom hooks\n\n"
 		confirmPrompt := successStyle.Render("  Press Y to save and apply") + " • " +
 			errorStyle.Render("N or ESC to cancel") + "\n"
@@ -275,12 +286,15 @@ func (m model) View() string {
 	}
 
 	// Normal list view
-	help := descStyle.Render("\n  ↑/↓: navigate  •  enter: select  •  p/space: preview  •  q: quit\n")
+	help := descStyle.Render("\n  ↑/↓: navigate  •  enter: select  •  p/space: preview all  •  q: quit\n")
 	player := descStyle.Render(fmt.Sprintf("  Audio player: %s\n", m.audioPlayer))
 
 	preview := ""
-	if m.lastPreview != "" {
-		preview = descStyle.Render(fmt.Sprintf("  🔊 Previewing: %s\n", m.lastPreview))
+	if m.previewing {
+		// Show preview in progress
+		preview = successStyle.Render(fmt.Sprintf("  🔊 Previewing all sounds from '%s'... (11 sounds with 1s delays)\n", m.lastPreview))
+	} else if m.lastPreview != "" {
+		preview = descStyle.Render(fmt.Sprintf("  Last preview: %s\n", m.lastPreview))
 	}
 
 	return "\n" + m.list.View() + help + player + preview
@@ -346,12 +360,28 @@ func scanSoundSuites(repoPath string) []SoundSuite {
 	return available
 }
 
-// playPreview plays a preview sound from the suite
-func (m *model) playPreview(suite SoundSuite) {
-	previewPath := filepath.Join(suite.Path, suite.PreviewFile)
-	cmd := exec.Command(m.audioPlayer, previewPath)
-	cmd.Start()
-	// Don't wait for completion, let it play in background
+// playAllSoundsPreview plays all sounds in sequence with 1s delays
+func (m *model) playAllSoundsPreview(suite SoundSuite) tea.Cmd {
+	return func() tea.Msg {
+		// Play all sounds sequentially with 1-second delays
+		for i, soundFile := range soundHookFiles {
+			soundPath := filepath.Join(suite.Path, soundFile+".wav")
+
+			// Play the sound and wait for it to complete
+			cmd := exec.Command(m.audioPlayer, soundPath)
+			if err := cmd.Run(); err != nil {
+				// Skip this sound if there's an error playing it
+				continue
+			}
+
+			// Wait 1 second before next sound (except after the last one)
+			if i < len(soundHookFiles)-1 {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
+		return previewDoneMsg{}
+	}
 }
 
 // applyConfiguration updates the Claude Code settings with the selected sound suite
